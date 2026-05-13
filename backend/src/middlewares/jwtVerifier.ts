@@ -24,7 +24,7 @@ const jwtVerifier = async (
     const decoded = jwt.verify(
       token,
       envVariables.ACCESS_TOKEN_KEY as string,
-    ) as { id: number };
+    ) as { id: string };
     console.log("1.2 Token Verified Successfully");
     console.log("2.1 Checking User Existence...");
     const UserExist = await User.findById(decoded.id).lean();
