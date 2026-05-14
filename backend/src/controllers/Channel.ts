@@ -494,6 +494,8 @@ export const deleteChannel = async (req: AuthRequest, res: Response) => {
           from: req.user!.id,
           to: formattedTo,
           message: notifyMessage,
+          link: `/channel/${deleteChannel.channelHandler}`,
+          type: "channel_delete",
         },
       ],
       { session },
@@ -507,10 +509,12 @@ export const deleteChannel = async (req: AuthRequest, res: Response) => {
         if (targetSocketID) {
           io.to(targetSocketID).emit("channelDeleted", deleteChannel._id);
           const newNotify: commonNotify = {
-            notificationID: newNotification._id,
+            id: newNotification._id,
             message: newNotification.message,
             createdAt: newNotification.createdAt,
-            link: `/channel/${deleteChannel.channelHandler}`,
+            link: newNotification?.link || null,
+            channelBanner: deleteChannel?.channelBanner || null,
+            type: newNotification.type,
           };
           io.to(targetSocketID).emit("newNotification", newNotify);
         }
@@ -616,9 +620,11 @@ export const subscriberToggle = async (req: AuthRequest, res: Response) => {
       const [newNotification] = await Notification.create(
         [
           {
-            from: req.user!.id,
+            from: channel._id,
             to: [{ id: channel.user_id }],
             message: `You lost one subscriber`,
+            link: `/channel/${channel.channelHandler}`,
+            type: "subscribe_lost",
           },
         ],
         { session },
@@ -627,10 +633,12 @@ export const subscriberToggle = async (req: AuthRequest, res: Response) => {
       const targetSocketId = userSockedIds[channel.user_id.toString()];
       if (targetSocketId) {
         const notify: commonNotify = {
-          notificationID: newNotification._id,
+          id: newNotification._id,
           message: `You lost one subscriber`,
           createdAt: newNotification.createdAt,
-          link: `/channel/${channel.channelHandler}`,
+          link: newNotification?.link || null,
+          channelBanner: channel?.channelBanner || null,
+          type: newNotification.type,
         };
         io.to(targetSocketId).emit("newNotification", notify);
         io.to(targetSocketId).emit("lostSubscriber", { success: true });
@@ -660,9 +668,11 @@ export const subscriberToggle = async (req: AuthRequest, res: Response) => {
     const [newNotification] = await Notification.create(
       [
         {
-          from: req.user!.id,
+          from: channel._id,
           to: [{ id: channel.user_id }],
           message: `You got new subscriber`,
+          link: `/channel/${channel.channelHandler}`,
+          type: "subscribe_got",
         },
       ],
       { session },
@@ -671,10 +681,12 @@ export const subscriberToggle = async (req: AuthRequest, res: Response) => {
     const targetSocketId = userSockedIds[channel.user_id.toString()];
     if (targetSocketId) {
       const notify: commonNotify = {
-        notificationID: newNotification._id,
+        id: newNotification._id,
         message: `You got new subscriber`,
         createdAt: newNotification.createdAt,
-        link: `/channel/${channel.channelHandler}`,
+        link: newNotification?.link || null,
+        channelBanner: channel?.channelBanner || null,
+        type: newNotification.type,
       };
       io.to(targetSocketId).emit("newNotification", notify);
       io.to(targetSocketId).emit("gotSubscriber", { success: true });

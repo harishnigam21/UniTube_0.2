@@ -3,7 +3,7 @@ const NotificationSchema = new mongoose.Schema(
   {
     from: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "channels",
       required: true,
     },
     to: [
@@ -20,7 +20,9 @@ const NotificationSchema = new mongoose.Schema(
         },
       },
     ],
+    type: { type: String, required: true },
     message: { type: String, required: true },
+    link: { type: String || null, default: null },
   },
   { timestamps: true },
 );

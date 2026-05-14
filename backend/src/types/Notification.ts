@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 
 export interface commonNotify {
-  notificationID: mongoose.Types.ObjectId;
+  id: mongoose.Types.ObjectId;
   message: string;
   createdAt: NativeDate;
-  link: string;
+  link: string | null;
+  type: string;
+  channelBanner: string | null;
 }
