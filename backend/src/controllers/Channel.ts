@@ -9,6 +9,7 @@ import Comment from "../models/Comment.js";
 import { io, userSockedIds } from "../socket.js";
 import Notification from "../models/Notification.js";
 import { commonNotify } from "../types/Notification.js";
+import { getServerError } from "../utils/serverError.js";
 
 // This controller, providing one channel info using id, id will be fetched from params.
 // Here aggregation will join the tables using lookup to get common info we will be needed for ex joining channels and users to get user info like firstname,...., I have designed aggregation in such manner , such that no extra load should be attached in response and all data should be fetched from DB in one instance..
@@ -314,8 +315,7 @@ export const getChannel = async (req: AuthRequest, res: Response) => {
       .status(200)
       .json({ message: "Successfully fetched Channel", data: ChannelData });
   } catch (error) {
-    console.error("Error from getChannel controller : ", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    getServerError(res, error, "getChannel controller");
   }
 };
 //This controller, provides all channels for particular user, with some extra fields other then channel it join post table to get post count and get only subscribers length from DB and other common fields from channel
@@ -353,8 +353,7 @@ export const getChannels = async (req: AuthRequest, res: Response) => {
       .status(200)
       .json({ message: "Successfully fetched channels", data: Channels });
   } catch (error) {
-    console.error("Error from getChannels controller : ", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    getServerError(res, error, "getChannels controller");
   }
 };
 // This controller will take data from body and files, body will be having all field like name,handler,... and files will be having banner and pictures, both will be available info only when multer runs, Transaction in used to follow the protocol either one or full.
@@ -426,8 +425,7 @@ export const createChannel = async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     await session.abortTransaction();
-    console.error("Error from createChannel controller : ", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    getServerError(res, error, "createChannel controller");
   } finally {
     await session.endSession();
   }
@@ -525,8 +523,7 @@ export const deleteChannel = async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     await session.abortTransaction();
-    console.error("Error from deleteChannel controller : ", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    getServerError(res, error, "deleteChannel controller");
   } finally {
     session.endSession();
   }
@@ -586,8 +583,7 @@ export const updateChannel = async (req: AuthRequest, res: Response) => {
       data: updateChannel,
     });
   } catch (error) {
-    console.error("Error from updateChannel Controller : ", error);
-    return res.status(500).json({ message: "Internal server error" });
+    getServerError(res, error, "updateChannel controller");
   }
 };
 
@@ -693,8 +689,7 @@ export const subscriberToggle = async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     await session.abortTransaction();
-    console.error("Error from subscriberToggle Controller : ", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    getServerError(res, error, "subscriberToggle controller");
   } finally {
     await session.endSession();
   }
@@ -717,7 +712,6 @@ export const validateHandler = async (req: AuthRequest, res: Response) => {
     console.log("Handler does not exist");
     return res.status(200).json({ message: "Handler Available", status: true });
   } catch (error) {
-    console.error("Error from validateHandler Controller : ", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    getServerError(res, error, "validateHandler controller");
   }
 };
