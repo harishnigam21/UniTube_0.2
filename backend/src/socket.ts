@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 
-let io: Server;
+export let io: Server;
 export const userSockedIds: Record<string, string> = {};
 export const initSocket = (server: any) => {
   io = new Server(server, {

@@ -2,6 +2,7 @@ import { Request } from "express";
 import mongoose from "mongoose";
 export interface AuthRequest extends Request {
   user?: {
+    id: string;
     firstname: string;
     middlename?: string | null;
     lastname: string;
