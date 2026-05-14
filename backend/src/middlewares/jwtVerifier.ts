@@ -33,7 +33,8 @@ const jwtVerifier = async (
       return res.status(404).json({ message: "User no longer exists" });
     }
     console.log("2.2 User Existence passed");
-    req.user = UserExist;
+    const { _id, ...rest } = UserExist;
+    req.user = { ...rest, id: _id.toString() };
     next();
   } catch (err) {
     //All kind of jwt error is handled
