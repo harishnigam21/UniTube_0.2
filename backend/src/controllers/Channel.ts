@@ -12,6 +12,8 @@ import { commonNotify } from "../types/Notification.js";
 import { getServerError } from "../utils/serverError.js";
 import PostLike from "../models/PostLike.js";
 import PostDislike from "../models/PostDislike.js";
+import CommentLike from "../models/CommentLike.js";
+import CommentDislike from "../models/CommentDislike.js";
 
 // This controller, providing one channel info using id, id will be fetched from params.
 // Here aggregation will join the tables using lookup to get common info we will be needed for ex joining channels and users to get user info like firstname,...., I have designed aggregation in such manner , such that no extra load should be attached in response and all data should be fetched from DB in one instance..
@@ -470,6 +472,18 @@ export const deleteChannel = async (req: AuthRequest, res: Response) => {
       { session },
     );
     await Comment.deleteMany(
+      {
+        post_id: { $in: RelatedPostIDs },
+      },
+      { session },
+    );
+    await CommentLike.deleteMany(
+      {
+        post_id: { $in: RelatedPostIDs },
+      },
+      { session },
+    );
+    await CommentDislike.deleteMany(
       {
         post_id: { $in: RelatedPostIDs },
       },

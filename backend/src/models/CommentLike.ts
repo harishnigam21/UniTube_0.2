@@ -6,13 +6,18 @@ const commentLikeSchema = new mongoose.Schema(
       ref: "users",
       required: true,
     },
+    post_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
     comment_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "comments",
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 commentLikeSchema.index({ user_id: 1, comment_id: 1 }, { unique: true });
 
